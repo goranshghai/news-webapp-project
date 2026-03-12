@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Contact | NewsXpress</title>
+  <link rel="stylesheet" href="./css/contact.css">
+</head>
+
+<body>
+
+  <div class="container-flex">
+    <div class="contact-wrapper">
+
+      <!-- LEFT: INFO -->
+      <div class="contact-info">
+        <h1>Contact NewsXpress</h1>
+        <p>Reach out for news tips, feedback, or business inquiries.</p>
+
+        <div class="info-item">
+          📧 <span>newsxpress@gmail.com</span>
+        </div>
+        <div class="info-item">
+          📞 <span>09090-01010</span>
+        </div>
+        <div class="info-item">
+          📍 <span>Delhi, India</span>
+        </div>
+      </div>
+
+      <!-- RIGHT: FORM -->
+      <div class="contact-form">
+        <form id="contactForm" action="/send-message" method="POST">
+
+          <input type="text" name="name" placeholder="Your Name" required>
+          <input type="email" name="email" placeholder="Email Address" required>
+          <textarea name="message" placeholder="Your Message" required></textarea>
+          <button type="submit">Send Message</button>
+
+        </form>
+      </div>
+    </div>
+  </div>
+
+</body>
+<footer>
+  <p>© 2026 NewsXpress. All rights reserved.</p>
+</footer>
+
+</html>

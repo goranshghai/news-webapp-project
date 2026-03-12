@@ -1,0 +1,44 @@
+.flex-container {
+    display: flex;
+    align-content: flex-start;
+    height: 100vh;
+}
+
+body {
+    background-image: url(../assets/deer-in-dark-mist-picjumbo-com.jpeg);
+    background-size: cover;
+    color: grey;
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none;     /* IE10+ and Edge */
+    user-select: none;         /* Standard syntax */
+}
+
+h1 {
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 5rem;
+    font-weight: 500;
+    color: slategray
+}
+
+h2 {
+    font-family:fantasy;
+  font-size: 1.5em;
+  font-weight:100;
+  margin: 0.83em 0;
+  color: black;
+}
+
+
+p, ul {
+    font-family: cursive;
+}
+
+#closingStatement {
+    font-size: small;
+}
+
+footer {
+    color: antiquewhite;
+    font-size: small;
+}
+
