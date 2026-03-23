@@ -59,7 +59,8 @@ app.post("/send-message", async (req, res) => {
                  <p><b>💖 Name:</b> ${name}</p>
                  <p><b>📧 Email:</b> ${email}</p>
                  <p><b>💬 Message:</b> ${message}</p>
-            `
+            `,
+            replyTo: email,
         };
 
         await transporter.sendMail(mailOptions);
