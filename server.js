@@ -4,6 +4,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import nodemailer from "nodemailer";
 import { fileURLToPath } from "url";
+import { log } from "console";
 
 dotenv.config();
 
@@ -66,6 +67,7 @@ app.post("/send-message", async (req, res) => {
         await transporter.sendMail(mailOptions);
 
        res.sendFile(path.join(__dirname, "public", "success.html"));
+       
 
     } catch (error) {
         console.error(error);
