@@ -7,6 +7,7 @@ import mongoose from "mongoose";                       // MongoDB ODM
 import { fileURLToPath } from "url";                   // Fix __dirname in ES modules
 
 import News from "./models/News.js";                   // Import News model
+import UserMessage from "./models/UserMessage.js";     // import Usermessage model
 
 dotenv.config();                                       // Load .env variables
 
@@ -98,6 +99,18 @@ app.post("/send-message", async (req, res) => {
     const { name, email, message } = req.body;
 
     try {
+        // 1. Save to DB
+        const newMessage = new UserMessage({
+            name,
+            email,
+            message
+        });
+
+        await newMessage.save();
+
+        console.log("User message saved to DB");
+
+        // 2. Send Email
         const transporter = nodemailer.createTransport({
             service: "gmail",
             auth: {
@@ -107,7 +120,7 @@ app.post("/send-message", async (req, res) => {
         });
 
         const mailOptions = {
-            from: process.env.EMAIL_USER,              // safer sender
+            from: process.env.EMAIL_USER,
             to: process.env.EMAIL_USER,
             subject: "New Contact Message - NewsXpress",
             html: `
@@ -124,8 +137,8 @@ app.post("/send-message", async (req, res) => {
         res.sendFile(path.join(__dirname, "public", "success.html"));
 
     } catch (error) {
-        console.error("Email error:", error.message);
-        res.status(500).send("Error sending message");
+        console.error("Error:", error.message);
+        res.status(500).send("Error processing request");
     }
 });
 
