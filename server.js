@@ -34,19 +34,26 @@ mongoose.connect(process.env.MONGO_URI)
 
 // ================= NEWS ROUTE =================
 app.get("/api/news", async (req, res) => {
-    const query = req.query.q || "world";              // Default category
+    const query = req.query.q || "world";
     const apiKey = process.env.NEWS_API_KEY;
 
     try {
-        // 1. Check DB cache (last 30 minutes)
-        const existingNews = await News.find({
-            category: query,
-            createdAt: { $gte: new Date(Date.now() - 30 * 60 * 1000) }
-        }).lean(); // lean = faster read
+        // 1. Check latest stored news (for freshness)
+        const latestNews = await News.findOne({ category: query })
+            .sort({ createdAt: -1 });
 
-        if (existingNews.length > 50) {
-            console.log("Serving from DB");
-            return res.json({ articles: existingNews });
+        const isFresh =
+            latestNews &&
+            (Date.now() - new Date(latestNews.createdAt)) < 30 * 60 * 1000;
+
+        if (isFresh) {
+            console.log("Serving FULL history from DB");
+
+            // Return ALL stored news (full history)
+            const allNews = await News.find({ category: query })
+                .sort({ publishedAt: -1 });
+
+            return res.json({ articles: allNews });
         }
 
         // 2. Fetch from external API
@@ -59,18 +66,19 @@ app.get("/api/news", async (req, res) => {
 
         const data = await response.json();
 
-        // 3. Map API response → DB format
+        // 3. Map API response
         const articles = data.articles.map(article => ({
             title: article.title,
             description: article.description,
             url: article.url,
             urlToImage: article.urlToImage,
             publishedAt: article.publishedAt,
-            source: { name: article.source?.name || "Unknown" }, // safe access
-            category: query
+            source: { name: article.source?.name || "Unknown" },
+            category: query,
+            createdAt: new Date()
         }));
 
-        // 4. Remove duplicates before insert
+        // 4. Avoid duplicates
         const existingUrls = await News.find({
             url: { $in: articles.map(a => a.url) }
         }).select("url").lean();
@@ -78,14 +86,19 @@ app.get("/api/news", async (req, res) => {
         const existingSet = new Set(existingUrls.map(a => a.url));
         const newArticles = articles.filter(a => !existingSet.has(a.url));
 
-       
+        // 5. Insert only new ones
+        if (newArticles.length > 0) {
             await News.insertMany(newArticles, { ordered: false });
-       
+            console.log(`Inserted ${newArticles.length} new articles`);
+        } else {
+            console.log("No new articles to insert");
+        }
 
-        console.log(`Inserted ${newArticles.length} new articles`);
+        // 6. Return FULL history (not just new ones)
+        const allNews = await News.find({ category: query })
+            .sort({ publishedAt: -1 });
 
-        // 6. Send response
-        res.json({ articles });
+        res.json({ articles: allNews });
 
     } catch (error) {
         console.error("News API error:", error.message);
