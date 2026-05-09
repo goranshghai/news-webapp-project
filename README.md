@@ -24,6 +24,7 @@ A full-stack news web application that fetches real-time news, stores it in Mong
    npm install
 
 3. Create a `.env` file with the following:
+   PORT=your_port
    MONGO_URI=your_mongo_uri
    NEWS_API_KEY=your_api_key
    EMAIL_USER=your_email
