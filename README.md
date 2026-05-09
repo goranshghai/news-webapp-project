@@ -33,6 +33,9 @@ A full-stack news web application that fetches real-time news, stores it in Mong
 4. Run the server
    npm start
 
+note:- api should be from this website https://newsapi.org 
+       otherwise, if taken another u should have to make some changes in order to run your code.
+
 ## Author
 
 Goransh
